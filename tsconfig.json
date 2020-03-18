@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "outDir": "dist",
+    "rootDir": "./src",
+    "declaration": true,
+    /* because libs is outside of src */
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "noImplicitUseStrict": true,
+    "lib": ["es6", "dom"],
+    "experimentalDecorators": true,
+    "downlevelIteration": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "_tests_",
+    "src/node-test.ts",
+    "src/config.ts"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "useWebpackText": true
+  },
+  "angularCompilerOptions": {
+    "debug": false
+  },
+  "compileOnSave": false,
+  "buildOnSave": true,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}
