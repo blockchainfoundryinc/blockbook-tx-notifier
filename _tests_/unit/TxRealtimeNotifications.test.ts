@@ -30,10 +30,10 @@ describe('TxRealtimeNotifications test', () => {
     app.close(done);
   })
 
-  it('$statusSubject should fire "connected" / "disconnected"', (cb) => {
+  it('statusSubject$ should fire "connected" / "disconnected"', (cb) => {
     const txNotif = new TxRealtimeNotifications(exampleConfig);
     
-    txNotif.$statusSubject.subscribe(status => {
+    txNotif.statusSubject$.subscribe(status => {
       if (txNotif.isConnected()) {
         expect(status).toEqual('connected');
         txNotif.disconnect();
@@ -44,10 +44,10 @@ describe('TxRealtimeNotifications test', () => {
     });
   });
 
-  it('getUnconfirmedTxs() should push unconfirmed txs to $txSubject', (cb) => {
+  it('getUnconfirmedTxs() should push unconfirmed txs to txSubject$', (cb) => {
     const txNotif = new TxRealtimeNotifications({ ...exampleConfig, preventFetchOnStart: false });
     
-    txNotif.$txSubject.subscribe(txs => {
+    txNotif.txSubject$.subscribe(txs => {
       expect(txs[0]).toBe('test_tx_1');
       expect(txs[1]).toBe('test_tx_2');
       txNotif.disconnect();
@@ -55,10 +55,10 @@ describe('TxRealtimeNotifications test', () => {
     });
   });
 
-  it('subscribeToTxs should push to $txSubject on new txs', (cb) => {
+  it('subscribeToTxs should push to txSubject$ on new txs', (cb) => {
     const txNotif = new TxRealtimeNotifications(exampleConfig);
     
-    txNotif.$txSubject.subscribe(txs => {
+    txNotif.txSubject$.subscribe(txs => {
       expect(txs[0]).toEqual('second_tx_test');
       txNotif.disconnect();
       cb();

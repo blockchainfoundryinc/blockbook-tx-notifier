@@ -9,8 +9,8 @@ export default class TxRealtimeNotification {
   private address;
   private preventFetchOnStart;
   private socket;
-  public $statusSubject = new Subject();
-  public $txSubject = new Subject();
+  public statusSubject$ = new Subject();
+  public txSubject$ = new Subject();
 
   constructor(props) {
     if (!props.url || !props.address) {
@@ -28,14 +28,14 @@ export default class TxRealtimeNotification {
     this.socket = io.connect(this.bbUrl);
 
     this.socket.on('connect', () => {
-      this.$statusSubject.next('connected')
+      this.statusSubject$.next('connected')
       this.subscribeToTxs();
 
       if (!this.preventFetchOnStart) {
         this.getUnconfirmedTxs();
       }
     });
-    this.socket.on('disconnect', () => this.$statusSubject.next('disconnected'));
+    this.socket.on('disconnect', () => this.statusSubject$.next('disconnected'));
   }
 
   public disconnect() {
@@ -54,7 +54,7 @@ export default class TxRealtimeNotification {
         method: 'getDetailedTransaction',
         params: [tx.txid]
       };
-      this.socket.send(opts, (tx) => this.$txSubject.next(Array.isArray(tx) ? tx : [tx]));
+      this.socket.send(opts, (tx) => this.txSubject$.next(Array.isArray(tx) ? tx : [tx]));
     })
   }
 
@@ -75,7 +75,7 @@ export default class TxRealtimeNotification {
     };
 
     this.socket.send(opts, (res) => {
-      this.$txSubject.next(res.result.items);
+      this.txSubject$.next(res.result.items);
     });
   }
 }
