@@ -6,7 +6,7 @@
   "typings": "dist/",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --runInBand",
     "build-test": "npm run build && npm run test",
     "version-bump": "npm --no-git-tag-version version patch"
   },
@@ -18,9 +18,11 @@
   "dependencies": {
     "@angular/core": "^8.2.12",
     "@types/node": "^12.0.1",
+    "axios": "^0.19.2",
     "rxjs": "^6.5.3",
     "socket.io-client": "^2.3.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.4.5",
+    "url-polyfill": "^1.1.8"
   },
   "devDependencies": {
     "@angular/common": "^9.0.7",

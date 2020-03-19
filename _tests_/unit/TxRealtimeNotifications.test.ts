@@ -16,7 +16,7 @@ describe('TxRealtimeNotifications test', () => {
       if (msg.method === 'getAddressHistory') {
         return answer({ result: { items: ['test_tx_1', 'test_tx_2'] } })
       } else if (msg.method === 'getDetailedTransaction') {
-        return answer(msg.params);
+        return answer(msg.params[0]);
       }
     })
   });
@@ -46,26 +46,35 @@ describe('TxRealtimeNotifications test', () => {
 
   it('getUnconfirmedTxs() should push unconfirmed txs to txSubject$', (cb) => {
     const txNotif = new TxRealtimeNotifications({ ...exampleConfig, preventFetchOnStart: false });
+    const mockFn = jest.fn();
     
-    txNotif.txSubject$.subscribe(txs => {
-      expect(txs[0]).toBe('test_tx_1');
-      expect(txs[1]).toBe('test_tx_2');
+    txNotif.txSubject$.subscribe(mockFn);
+
+    setTimeout(() => {
+      const firstCall: any = mockFn.mock.calls[0][0];
+      expect(mockFn.mock.calls).toHaveLength(2);
+      expect(firstCall.tx).toEqual('test_tx_1');
       txNotif.disconnect();
       cb();
-    });
+    }, 1000);
   });
 
   it('subscribeToTxs should push to txSubject$ on new txs', (cb) => {
     const txNotif = new TxRealtimeNotifications(exampleConfig);
+    const mockFn = jest.fn();
     
-    txNotif.txSubject$.subscribe(txs => {
-      expect(txs[0]).toEqual('second_tx_test');
-      txNotif.disconnect();
-      cb();
-    });
+    txNotif.txSubject$.subscribe(mockFn);
 
     setTimeout(() => {
       io.emit('bitcoind/addresstxid', { txid: 'second_tx_test', address: 'test_address' });
+    }, 500);
+
+    setTimeout(() => {
+      const firstCall: any = mockFn.mock.calls[0][0];
+      expect(mockFn.mock.calls).toHaveLength(1);
+      expect(firstCall.tx).toEqual('second_tx_test');
+      txNotif.disconnect();
+      cb();
     }, 1000);
   });
 });

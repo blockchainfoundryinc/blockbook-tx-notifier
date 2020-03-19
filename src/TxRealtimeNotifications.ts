@@ -1,4 +1,6 @@
 import * as io from 'socket.io-client';
+import axios from 'axios';
+import URL from 'url-polyfill';
 import { Subject } from 'rxjs';
 import {
   AddressTxid
@@ -9,6 +11,7 @@ export default class TxRealtimeNotification {
   private address;
   private preventFetchOnStart;
   private socket;
+  private unconfirmedTxs = [];
   public statusSubject$ = new Subject();
   public txSubject$ = new Subject();
 
@@ -24,12 +27,21 @@ export default class TxRealtimeNotification {
     this.connect();
   }
 
+  private getHashblockUrl(hash) {
+    const url = new URL(this.bbUrl);
+    url.protocol = 'https';
+    url.pathname = `/api/v2/block/${hash}`;
+
+    return url.toString();
+  }
+
   private connect() {
     this.socket = io.connect(this.bbUrl);
 
     this.socket.on('connect', () => {
       this.statusSubject$.next('connected')
       this.subscribeToTxs();
+      this.subscribeToBlockhash();
 
       if (!this.preventFetchOnStart) {
         this.getUnconfirmedTxs();
@@ -46,7 +58,7 @@ export default class TxRealtimeNotification {
     return this.socket.connected;
   }
 
-  public subscribeToTxs() {
+  private subscribeToTxs() {
     this.socket.emit('subscribe', 'bitcoind/addresstxid', Array.isArray(this.address) ? this.address : [this.address]);
 
     this.socket.on('bitcoind/addresstxid', (tx: AddressTxid) => {
@@ -54,7 +66,53 @@ export default class TxRealtimeNotification {
         method: 'getDetailedTransaction',
         params: [tx.txid]
       };
-      this.socket.send(opts, (tx) => this.txSubject$.next(Array.isArray(tx) ? tx : [tx]));
+      this.socket.send(opts, (tx) => {
+        const parsedTx = {
+          txid: tx.txid,
+          confirmed: false,
+          tx: tx
+        };
+        this.txSubject$.next(parsedTx);
+        this.unconfirmedTxs.push(parsedTx);
+      });
+    });
+  }
+  
+  private subscribeToBlockhash() {
+    this.socket.emit('subscribe', 'bitcoind/hashblock');
+    this.socket.on('bitcoind/hashblock', async (hash) => {
+      let block;
+
+      try {
+        block = await axios.get(this.getHashblockUrl(hash));
+      } catch(err) {
+        console.error(err);
+        return;
+      }
+
+      const txsInBlock = block.txs.map(tx => tx.txid);
+
+      const newUnconfirmedTxs = [];
+      this.unconfirmedTxs.forEach(tx => {
+        const utxidIndex = txsInBlock.findIndex((txInBlock) => txInBlock.txid === tx.txid);
+        if (utxidIndex !== -1) {
+          const opts = {
+            method: 'getDetailedTransaction',
+            params: [tx.txid]
+          };
+          this.socket.send(opts, (confirmedTx) => {
+            this.txSubject$.next({
+              txid: confirmedTx.txid,
+              confirmed: true,
+              tx: confirmedTx
+            });
+          });
+        } else {
+          newUnconfirmedTxs.push(tx);
+        }
+      });
+
+      this.unconfirmedTxs = newUnconfirmedTxs;
     })
   }
 
@@ -67,6 +125,7 @@ export default class TxRealtimeNotification {
           // needed for older bitcores (so we don't load all history if bitcore-node < 3.1.3)
           start: 0,
           end: 1000,
+
           from: 0,
           to: 1000,
           queryMempoolOnly: true
@@ -75,7 +134,16 @@ export default class TxRealtimeNotification {
     };
 
     this.socket.send(opts, (res) => {
-      this.txSubject$.next(res.result.items);
+      const parsedItems = res.result.items.map(tx => ({
+        txid: tx.txid,
+        confirmed: false,
+        tx
+      }));
+
+      parsedItems.forEach(tx => {
+        this.txSubject$.next(tx);
+        this.unconfirmedTxs.push(tx);
+      });
     });
   }
 }
