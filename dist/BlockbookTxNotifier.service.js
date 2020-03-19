@@ -9,8 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var BlockbookTxNotifier_1 = require("./BlockbookTxNotifier");
 var BlockbookTxNotifierConfig_service_1 = require("./BlockbookTxNotifierConfig.service");
+var index_1 = require("./index");
 var BlockbookTxNotifierService = /** @class */ (function () {
     function BlockbookTxNotifierService(configService) {
         var _this = this;
@@ -19,7 +19,7 @@ var BlockbookTxNotifierService = /** @class */ (function () {
             if (!config)
                 return;
             _this.config = config;
-            _this.txNotifs = new BlockbookTxNotifier_1.default({ url: config.url, address: config.address });
+            _this.txNotifs = new index_1.BlockbookTxNotifier({ url: config.url, address: config.address });
         });
     }
     BlockbookTxNotifierService.prototype.ngOnDestroy = function () {

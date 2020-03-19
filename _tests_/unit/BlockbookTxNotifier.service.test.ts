@@ -4,7 +4,7 @@ import { BlockbookTxNotifierConfigService, BlockbookTxNotifierService } from '..
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 
-describe('Service: BlockbookTxNotifiers', () => {
+describe('Service: BlockbookTxNotifier', () => {
   let service, config;
 
   beforeEach(() => {

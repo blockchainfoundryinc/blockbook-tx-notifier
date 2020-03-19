@@ -1,18 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import BlockbookTxNotifiers from "./BlockbookTxNotifier";
 import { BlockbookTxNotifierConfigService } from "./BlockbookTxNotifierConfig.service";
-import { BlockbookTxNotifiersConstructorProps } from "./index";
+import { BlockbookTxNotifiersConstructorProps, BlockbookTxNotifier } from "./index";
 
 @Injectable()
 export class BlockbookTxNotifierService implements OnDestroy {
-  private txNotifs: BlockbookTxNotifiers;
+  private txNotifs: BlockbookTxNotifier;
   public config: BlockbookTxNotifiersConstructorProps;
 
   constructor(private configService: BlockbookTxNotifierConfigService) {
     this.configService.configComplete.subscribe(config => {
       if (!config) return;
       this.config = config;
-      this.txNotifs = new BlockbookTxNotifiers({ url: config.url, address: config.address});
+      this.txNotifs = new BlockbookTxNotifier({ url: config.url, address: config.address});
     });
   }
 

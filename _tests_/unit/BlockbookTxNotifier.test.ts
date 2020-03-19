@@ -1,7 +1,7 @@
-import BlockbookTxNotifiers from '../../dist/BlockbookTxNotifier';
+import { BlockbookTxNotifier } from '../../dist';
 import * as socketio from 'socket.io';
 
-describe('BlockbookTxNotifiers test', () => {
+describe('BlockbookTxNotifier test', () => {
   const app = require('http').createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
     res.write(JSON.stringify({
@@ -38,14 +38,14 @@ describe('BlockbookTxNotifiers test', () => {
 
   it('should throw error if initialized without required params', () => {
     try {
-      new BlockbookTxNotifiers({})
+      new BlockbookTxNotifier({})
     } catch(err) {
       expect(err.message).toEqual('Missing required parameter.');
     }
   })
 
   it('statusSubject$ should fire "connected" / "disconnected"', (cb) => {
-    const txNotif = new BlockbookTxNotifiers(exampleConfig);
+    const txNotif = new BlockbookTxNotifier(exampleConfig);
     
     txNotif.statusSubject$.subscribe(status => {
       if (txNotif.isConnected()) {
@@ -59,7 +59,7 @@ describe('BlockbookTxNotifiers test', () => {
   });
 
   it('getUnconfirmedTxs() should push unconfirmed txs to txSubject$', (cb) => {
-    const txNotif = new BlockbookTxNotifiers({ ...exampleConfig, preventFetchOnStart: false });
+    const txNotif = new BlockbookTxNotifier({ ...exampleConfig, preventFetchOnStart: false });
     const mockFn = jest.fn();
     
     txNotif.txSubject$.subscribe(mockFn);
@@ -74,7 +74,7 @@ describe('BlockbookTxNotifiers test', () => {
   });
 
   it('subscribeToTxs should push to txSubject$ on new txs', (cb) => {
-    const txNotif = new BlockbookTxNotifiers(exampleConfig);
+    const txNotif = new BlockbookTxNotifier(exampleConfig);
     const mockFn = jest.fn();
     
     txNotif.txSubject$.subscribe(mockFn);
@@ -93,7 +93,7 @@ describe('BlockbookTxNotifiers test', () => {
   });
 
   it('should check for confirmed txs on new hashblock', (cb) => {
-    const txNotif = new BlockbookTxNotifiers({ ...exampleConfig, useHttp: true });
+    const txNotif = new BlockbookTxNotifier({ ...exampleConfig, useHttp: true });
     const mockFn = jest.fn();
 
     txNotif.txSubject$.subscribe(mockFn);

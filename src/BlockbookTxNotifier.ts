@@ -6,7 +6,7 @@ import {
   AddressTxid
 } from './index';
 
-export default class BlockbookTxNotifier {
+export class BlockbookTxNotifier {
   private bbUrl = '';
   private address;
   private preventFetchOnStart;

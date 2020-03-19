@@ -1,6 +1,6 @@
 import 'url-polyfill';
 import { Subject } from 'rxjs';
-export default class BlockbookTxNotifier {
+export declare class BlockbookTxNotifier {
     private bbUrl;
     private address;
     private preventFetchOnStart;

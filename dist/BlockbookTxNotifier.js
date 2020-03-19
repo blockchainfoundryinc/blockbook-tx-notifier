@@ -175,4 +175,4 @@ var BlockbookTxNotifier = /** @class */ (function () {
     };
     return BlockbookTxNotifier;
 }());
-exports.default = BlockbookTxNotifier;
+exports.BlockbookTxNotifier = BlockbookTxNotifier;
