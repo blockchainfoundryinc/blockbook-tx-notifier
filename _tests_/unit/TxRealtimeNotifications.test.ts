@@ -9,7 +9,7 @@ describe('TxRealtimeNotifications test', () => {
     }));
     res.end();
   });
-  const io = socketio(app);
+  const io: any = socketio(app);
   const PORT = 4448;
   const exampleConfig = {
     url: 'http://localhost:' + PORT,
