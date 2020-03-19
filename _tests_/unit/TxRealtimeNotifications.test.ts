@@ -1,4 +1,4 @@
-import TxRealtimeNotifications from '../../src/TxRealtimeNotifications';
+import TxRealtimeNotifications from '../../dist/TxRealtimeNotifications';
 import * as socketio from 'socket.io';
 
 describe('TxRealtimeNotifications test', () => {

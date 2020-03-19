@@ -1,6 +1,6 @@
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
-import { TxRealtimeNotificationsConfigService, TxRealtimeNotificationsService } from '../../src';
+import { TxRealtimeNotificationsConfigService, TxRealtimeNotificationsService } from '../../dist';
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 

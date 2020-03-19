@@ -6,7 +6,7 @@
   "typings": "dist/",
   "scripts": {
     "build": "tsc",
-    "test": "jest --runInBand",
+    "test": "npm run build && jest --runInBand",
     "build-test": "npm run build && npm run test",
     "version-bump": "npm --no-git-tag-version version patch"
   },
