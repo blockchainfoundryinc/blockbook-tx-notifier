@@ -36,6 +36,14 @@ describe('TxRealtimeNotifications test', () => {
     app.close(done);
   })
 
+  it('should throw error if initialized without required params', () => {
+    try {
+      new TxRealtimeNotifications({})
+    } catch(err) {
+      expect(err.message).toEqual('Missing required parameter.');
+    }
+  })
+
   it('statusSubject$ should fire "connected" / "disconnected"', (cb) => {
     const txNotif = new TxRealtimeNotifications(exampleConfig);
     
