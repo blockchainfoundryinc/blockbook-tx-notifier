@@ -2,6 +2,6 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./TxRealtimeNotifications"));
-__export(require("./TxRealtimeNotifications.service"));
-__export(require("./TxRealtimeNotificationsConfig.service"));
+__export(require("./BlockbookTxNotifier"));
+__export(require("./BlockbookTxNotifier.service"));
+__export(require("./BlockbookTxNotifierConfig.service"));

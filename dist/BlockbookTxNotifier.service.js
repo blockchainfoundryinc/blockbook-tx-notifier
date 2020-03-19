@@ -9,32 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var TxRealtimeNotifications_1 = require("./TxRealtimeNotifications");
-var TxRealtimeNotificationsConfig_service_1 = require("./TxRealtimeNotificationsConfig.service");
-var TxRealtimeNotificationsService = /** @class */ (function () {
-    function TxRealtimeNotificationsService(configService) {
+var BlockbookTxNotifier_1 = require("./BlockbookTxNotifier");
+var BlockbookTxNotifierConfig_service_1 = require("./BlockbookTxNotifierConfig.service");
+var BlockbookTxNotifierService = /** @class */ (function () {
+    function BlockbookTxNotifierService(configService) {
         var _this = this;
         this.configService = configService;
         this.configService.configComplete.subscribe(function (config) {
             if (!config)
                 return;
             _this.config = config;
-            _this.txNotifs = new TxRealtimeNotifications_1.default({ url: config.url, address: config.address });
+            _this.txNotifs = new BlockbookTxNotifier_1.default({ url: config.url, address: config.address });
         });
     }
-    TxRealtimeNotificationsService.prototype.ngOnDestroy = function () {
+    BlockbookTxNotifierService.prototype.ngOnDestroy = function () {
         this.configService.configComplete.unsubscribe();
     };
-    TxRealtimeNotificationsService.prototype.txSubject = function () {
+    BlockbookTxNotifierService.prototype.txSubject = function () {
         return this.txNotifs.txSubject$;
     };
-    TxRealtimeNotificationsService.prototype.statusSubject = function () {
+    BlockbookTxNotifierService.prototype.statusSubject = function () {
         return this.txNotifs.statusSubject$;
     };
-    TxRealtimeNotificationsService = __decorate([
+    BlockbookTxNotifierService = __decorate([
         core_1.Injectable(),
-        __metadata("design:paramtypes", [TxRealtimeNotificationsConfig_service_1.TxRealtimeNotificationsConfigService])
-    ], TxRealtimeNotificationsService);
-    return TxRealtimeNotificationsService;
+        __metadata("design:paramtypes", [BlockbookTxNotifierConfig_service_1.BlockbookTxNotifierConfigService])
+    ], BlockbookTxNotifierService);
+    return BlockbookTxNotifierService;
 }());
-exports.TxRealtimeNotificationsService = TxRealtimeNotificationsService;
+exports.BlockbookTxNotifierService = BlockbookTxNotifierService;

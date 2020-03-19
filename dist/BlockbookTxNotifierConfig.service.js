@@ -10,19 +10,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var rxjs_1 = require("rxjs");
-var TxRealtimeNotificationsConfigService = /** @class */ (function () {
-    function TxRealtimeNotificationsConfigService() {
+var BlockbookTxNotifierConfigService = /** @class */ (function () {
+    function BlockbookTxNotifierConfigService() {
         this.configComplete = new rxjs_1.BehaviorSubject(null);
     }
-    TxRealtimeNotificationsConfigService.prototype.configure = function (url, address) {
+    BlockbookTxNotifierConfigService.prototype.configure = function (url, address) {
         this.url = url;
         this.address = address;
         this.configComplete.next({ url: this.url, address: this.address });
     };
-    TxRealtimeNotificationsConfigService = __decorate([
+    BlockbookTxNotifierConfigService = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [])
-    ], TxRealtimeNotificationsConfigService);
-    return TxRealtimeNotificationsConfigService;
+    ], BlockbookTxNotifierConfigService);
+    return BlockbookTxNotifierConfigService;
 }());
-exports.TxRealtimeNotificationsConfigService = TxRealtimeNotificationsConfigService;
+exports.BlockbookTxNotifierConfigService = BlockbookTxNotifierConfigService;

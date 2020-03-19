@@ -1,5 +1,5 @@
 {
-  "name": "tx-realtime-notifs",
+  "name": "blockbook-tx-notifier",
   "version": "1.0.0",
   "description": "Realtime TX notifications based on Blockbook",
   "main": "dist/",

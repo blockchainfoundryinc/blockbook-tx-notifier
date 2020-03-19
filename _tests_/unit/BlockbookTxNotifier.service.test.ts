@@ -1,10 +1,10 @@
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
-import { TxRealtimeNotificationsConfigService, TxRealtimeNotificationsService } from '../../dist';
+import { BlockbookTxNotifierConfigService, BlockbookTxNotifierService } from '../../dist';
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 
-describe('Service: TxRealtimeNotifications', () => {
+describe('Service: BlockbookTxNotifiers', () => {
   let service, config;
 
   beforeEach(() => {
@@ -14,13 +14,13 @@ describe('Service: TxRealtimeNotifications', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        TxRealtimeNotificationsConfigService,
-        TxRealtimeNotificationsService
+        BlockbookTxNotifierConfigService,
+        BlockbookTxNotifierService
       ]
     });
 
-    config = TestBed.get(TxRealtimeNotificationsConfigService);
-    service = TestBed.get(TxRealtimeNotificationsService);
+    config = TestBed.get(BlockbookTxNotifierConfigService);
+    service = TestBed.get(BlockbookTxNotifierService);
     config.configure('test', 'test');
   });
 

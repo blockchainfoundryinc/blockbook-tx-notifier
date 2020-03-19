@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from "rxjs";
-import { TxRealtimeNotificationsConstructorProps } from "./index";
+import { BlockbookTxNotifiersConstructorProps } from "./index";
 
 @Injectable()
-export class TxRealtimeNotificationsConfigService {
+export class BlockbookTxNotifierConfigService {
   public url: string;
   public address: string;
-  public configComplete: BehaviorSubject<TxRealtimeNotificationsConstructorProps> = new BehaviorSubject(null);
+  public configComplete: BehaviorSubject<BlockbookTxNotifiersConstructorProps> = new BehaviorSubject(null);
 
   constructor() {
   }

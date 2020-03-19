@@ -39,8 +39,8 @@ var io = require("socket.io-client");
 var axios_1 = require("axios");
 require("url-polyfill");
 var rxjs_1 = require("rxjs");
-var TxRealtimeNotification = /** @class */ (function () {
-    function TxRealtimeNotification(props) {
+var BlockbookTxNotifier = /** @class */ (function () {
+    function BlockbookTxNotifier(props) {
         this.bbUrl = '';
         this.unconfirmedTxs = [];
         this.statusSubject$ = new rxjs_1.Subject();
@@ -54,13 +54,13 @@ var TxRealtimeNotification = /** @class */ (function () {
         this.useHttp = !!props.useHttp;
         this.connect();
     }
-    TxRealtimeNotification.prototype.getHashblockUrl = function (hash) {
+    BlockbookTxNotifier.prototype.getHashblockUrl = function (hash) {
         var url = new URL(this.bbUrl);
         url.protocol = this.useHttp ? 'http' : 'https';
         url.pathname = "/api/v2/block/" + hash;
         return url.toString();
     };
-    TxRealtimeNotification.prototype.connect = function () {
+    BlockbookTxNotifier.prototype.connect = function () {
         var _this = this;
         this.socket = io.connect(this.bbUrl);
         this.socket.on('connect', function () {
@@ -73,13 +73,13 @@ var TxRealtimeNotification = /** @class */ (function () {
         });
         this.socket.on('disconnect', function () { return _this.statusSubject$.next('disconnected'); });
     };
-    TxRealtimeNotification.prototype.disconnect = function () {
+    BlockbookTxNotifier.prototype.disconnect = function () {
         this.socket.disconnect();
     };
-    TxRealtimeNotification.prototype.isConnected = function () {
+    BlockbookTxNotifier.prototype.isConnected = function () {
         return this.socket.connected;
     };
-    TxRealtimeNotification.prototype.subscribeToTxs = function () {
+    BlockbookTxNotifier.prototype.subscribeToTxs = function () {
         var _this = this;
         this.socket.emit('subscribe', 'bitcoind/addresstxid', Array.isArray(this.address) ? this.address : [this.address]);
         this.socket.on('bitcoind/addresstxid', function (tx) {
@@ -98,7 +98,7 @@ var TxRealtimeNotification = /** @class */ (function () {
             });
         });
     };
-    TxRealtimeNotification.prototype.subscribeToBlockhash = function () {
+    BlockbookTxNotifier.prototype.subscribeToBlockhash = function () {
         var _this = this;
         this.socket.emit('subscribe', 'bitcoind/hashblock');
         this.socket.on('bitcoind/hashblock', function (hash) { return __awaiter(_this, void 0, void 0, function () {
@@ -145,7 +145,7 @@ var TxRealtimeNotification = /** @class */ (function () {
             });
         }); });
     };
-    TxRealtimeNotification.prototype.getUnconfirmedTxs = function () {
+    BlockbookTxNotifier.prototype.getUnconfirmedTxs = function () {
         var _this = this;
         var opts = {
             method: 'getAddressHistory',
@@ -173,6 +173,6 @@ var TxRealtimeNotification = /** @class */ (function () {
             });
         });
     };
-    return TxRealtimeNotification;
+    return BlockbookTxNotifier;
 }());
-exports.default = TxRealtimeNotification;
+exports.default = BlockbookTxNotifier;

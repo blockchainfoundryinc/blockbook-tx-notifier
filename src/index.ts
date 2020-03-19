@@ -1,13 +1,13 @@
-export * from './TxRealtimeNotifications';
-export * from './TxRealtimeNotifications.service';
-export * from './TxRealtimeNotificationsConfig.service';
+export * from './BlockbookTxNotifier';
+export * from './BlockbookTxNotifier.service';
+export * from './BlockbookTxNotifierConfig.service';
 
 export interface AddressTxid {
   txid: string,
   address: string
 }
 
-export interface TxRealtimeNotificationsConstructorProps {
+export interface BlockbookTxNotifiersConstructorProps {
   url: string;
   address: string;
 }
