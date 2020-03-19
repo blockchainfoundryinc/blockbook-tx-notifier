@@ -1,6 +1,6 @@
 import * as io from 'socket.io-client';
 import axios from 'axios';
-import URL from 'url-polyfill';
+import 'url-polyfill';
 import { Subject } from 'rxjs';
 import {
   AddressTxid
@@ -12,6 +12,7 @@ export default class TxRealtimeNotification {
   private preventFetchOnStart;
   private socket;
   private unconfirmedTxs = [];
+  private useHttp;
   public statusSubject$ = new Subject();
   public txSubject$ = new Subject();
 
@@ -23,13 +24,14 @@ export default class TxRealtimeNotification {
     this.bbUrl = props.url;
     this.address = props.address;
     this.preventFetchOnStart = !!props.preventFetchOnStart;
+    this.useHttp = !!props.useHttp;
 
     this.connect();
   }
 
   private getHashblockUrl(hash) {
     const url = new URL(this.bbUrl);
-    url.protocol = 'https';
+    url.protocol = this.useHttp ? 'http' : 'https';
     url.pathname = `/api/v2/block/${hash}`;
 
     return url.toString();
@@ -85,16 +87,18 @@ export default class TxRealtimeNotification {
 
       try {
         block = await axios.get(this.getHashblockUrl(hash));
+        block = block.data;
       } catch(err) {
         console.error(err);
         return;
       }
 
-      const txsInBlock = block.txs.map(tx => tx.txid);
+      const txsInBlock = block.txs;
 
       const newUnconfirmedTxs = [];
       this.unconfirmedTxs.forEach(tx => {
         const utxidIndex = txsInBlock.findIndex((txInBlock) => txInBlock.txid === tx.txid);
+
         if (utxidIndex !== -1) {
           const opts = {
             method: 'getDetailedTransaction',

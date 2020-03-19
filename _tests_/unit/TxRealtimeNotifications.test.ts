@@ -2,7 +2,13 @@ import TxRealtimeNotifications from '../../src/TxRealtimeNotifications';
 import * as socketio from 'socket.io';
 
 describe('TxRealtimeNotifications test', () => {
-  const app = require('http').createServer();
+  const app = require('http').createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+    res.write(JSON.stringify({
+      txs: [{ txid: 'test_tx_3' }]
+    }));
+    res.end();
+  });
   const io = socketio(app);
   const PORT = 4448;
   const exampleConfig = {
@@ -14,9 +20,9 @@ describe('TxRealtimeNotifications test', () => {
   io.on('connection', (socket) => {
     socket.on('message', (msg, answer) => {
       if (msg.method === 'getAddressHistory') {
-        return answer({ result: { items: ['test_tx_1', 'test_tx_2'] } })
+        return answer({ result: { items: [{ txid: 'test_tx_1' }, { txid: 'test_tx_2' }] } })
       } else if (msg.method === 'getDetailedTransaction') {
-        return answer(msg.params[0]);
+        return answer({ txid: msg.params[0] });
       }
     })
   });
@@ -53,7 +59,7 @@ describe('TxRealtimeNotifications test', () => {
     setTimeout(() => {
       const firstCall: any = mockFn.mock.calls[0][0];
       expect(mockFn.mock.calls).toHaveLength(2);
-      expect(firstCall.tx).toEqual('test_tx_1');
+      expect(firstCall.tx.txid).toEqual('test_tx_1');
       txNotif.disconnect();
       cb();
     }, 1000);
@@ -72,9 +78,35 @@ describe('TxRealtimeNotifications test', () => {
     setTimeout(() => {
       const firstCall: any = mockFn.mock.calls[0][0];
       expect(mockFn.mock.calls).toHaveLength(1);
-      expect(firstCall.tx).toEqual('second_tx_test');
+      expect(firstCall.tx.txid).toEqual('second_tx_test');
       txNotif.disconnect();
       cb();
     }, 1000);
+  });
+
+  it('should check for confirmed txs on new hashblock', (cb) => {
+    const txNotif = new TxRealtimeNotifications({ ...exampleConfig, useHttp: true });
+    const mockFn = jest.fn();
+
+    txNotif.txSubject$.subscribe(mockFn);
+
+    setTimeout(() => {
+      io.emit('bitcoind/addresstxid', { txid: 'test_tx_3', address: 'test_address' });
+    }, 500);
+    setTimeout(() => {
+      io.emit('bitcoind/hashblock', 'test_block_hash');
+    }, 1000);
+
+    setTimeout(() => {
+      const firstCall = mockFn.mock.calls[0][0];
+      const secondCall = mockFn.mock.calls[1][0];
+      expect(mockFn.mock.calls).toHaveLength(2);
+      expect(firstCall.confirmed).toBeFalsy();
+      expect(firstCall.tx.txid).toEqual('test_tx_3');
+      expect(secondCall.confirmed).toBeTruthy();
+      expect(secondCall.tx.txid).toEqual('test_tx_3');
+      txNotif.disconnect();
+      cb();
+    }, 2000);
   });
 });
