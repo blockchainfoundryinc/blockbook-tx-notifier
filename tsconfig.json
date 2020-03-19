@@ -11,7 +11,8 @@
     "noImplicitUseStrict": true,
     "lib": ["es6", "dom"],
     "experimentalDecorators": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
   },
   "exclude": [
     "node_modules",

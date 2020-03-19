@@ -25,10 +25,11 @@
     "url-polyfill": "^1.1.8"
   },
   "devDependencies": {
-    "@angular/common": "^9.0.7",
-    "@angular/compiler": "^9.0.7",
-    "@angular/platform-browser": "^9.0.7",
-    "@angular/platform-browser-dynamic": "^9.0.7",
+    "@angular/platform-browser": "^8.2.14",
+    "@angular/common": "^8.2.14",
+    "@angular/compiler": "^8.2.14",
+    "@angular/core": "^8.2.14",
+    "@angular/platform-browser-dynamic": "^8.2.14",
     "@types/jest": "^24.0.13",
     "core-js": "^2.5.7",
     "jest": "^24.8.0",
