@@ -38,7 +38,7 @@ export class BlockbookTxNotifier {
   }
 
   private connect() {
-    this.socket = io.connect(this.bbUrl);
+    this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
 
     this.socket.on('connect', () => {
       this.statusSubject$.next('connected')
