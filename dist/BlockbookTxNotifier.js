@@ -62,7 +62,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
     };
     BlockbookTxNotifier.prototype.connect = function () {
         var _this = this;
-        this.socket = io.connect(this.bbUrl);
+        this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
         this.socket.on('connect', function () {
             _this.statusSubject$.next('connected');
             _this.subscribeToTxs();
