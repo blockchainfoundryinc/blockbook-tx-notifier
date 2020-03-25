@@ -87,11 +87,11 @@ var BlockbookTxNotifier = /** @class */ (function () {
                 method: 'getDetailedTransaction',
                 params: [tx.txid]
             };
-            _this.socket.send(opts, function (tx) {
+            _this.socket.send(opts, function (txDetails) {
                 var parsedTx = {
                     txid: tx.txid,
                     confirmed: false,
-                    tx: tx
+                    tx: txDetails.result
                 };
                 _this.txSubject$.next(parsedTx);
                 _this.unconfirmedTxs.push(parsedTx);
@@ -129,9 +129,9 @@ var BlockbookTxNotifier = /** @class */ (function () {
                                 };
                                 _this.socket.send(opts, function (confirmedTx) {
                                     _this.txSubject$.next({
-                                        txid: confirmedTx.txid,
+                                        txid: confirmedTx.result.hash,
                                         confirmed: true,
-                                        tx: confirmedTx
+                                        tx: confirmedTx.result
                                     });
                                 });
                             }

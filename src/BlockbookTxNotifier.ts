@@ -68,11 +68,11 @@ export class BlockbookTxNotifier {
         method: 'getDetailedTransaction',
         params: [tx.txid]
       };
-      this.socket.send(opts, (tx) => {
+      this.socket.send(opts, (txDetails) => {
         const parsedTx = {
           txid: tx.txid,
           confirmed: false,
-          tx: tx
+          tx: txDetails.result
         };
         this.txSubject$.next(parsedTx);
         this.unconfirmedTxs.push(parsedTx);
@@ -106,9 +106,9 @@ export class BlockbookTxNotifier {
           };
           this.socket.send(opts, (confirmedTx) => {
             this.txSubject$.next({
-              txid: confirmedTx.txid,
+              txid: confirmedTx.result.hash,
               confirmed: true,
-              tx: confirmedTx
+              tx: confirmedTx.result
             });
           });
         } else {
