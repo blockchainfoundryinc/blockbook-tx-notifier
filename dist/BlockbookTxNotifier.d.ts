@@ -11,6 +11,7 @@ export declare class BlockbookTxNotifier {
     txSubject$: Subject<unknown>;
     constructor(props: any);
     private getHashblockUrl;
+    private getTxUrl;
     private connect;
     disconnect(): void;
     isConnected(): any;

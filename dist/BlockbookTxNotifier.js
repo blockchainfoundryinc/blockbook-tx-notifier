@@ -60,6 +60,12 @@ var BlockbookTxNotifier = /** @class */ (function () {
         url.pathname = "/api/v2/block/" + hash;
         return url.toString();
     };
+    BlockbookTxNotifier.prototype.getTxUrl = function (txid) {
+        var url = new URL(this.bbUrl);
+        url.protocol = this.useHttp ? 'http' : 'https';
+        url.pathname = "/api/v2/tx/" + txid;
+        return url.toString();
+    };
     BlockbookTxNotifier.prototype.connect = function () {
         var _this = this;
         this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
@@ -102,7 +108,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
         var _this = this;
         this.socket.emit('subscribe', 'bitcoind/hashblock');
         this.socket.on('bitcoind/hashblock', function (hash) { return __awaiter(_this, void 0, void 0, function () {
-            var block, err_1, txsInBlock, newUnconfirmedTxs;
+            var block, txDetails, err_1, txsInBlock, newUnconfirmedTxs;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -120,25 +126,39 @@ var BlockbookTxNotifier = /** @class */ (function () {
                     case 3:
                         txsInBlock = block.txs;
                         newUnconfirmedTxs = [];
-                        this.unconfirmedTxs.forEach(function (tx) {
-                            var utxidIndex = txsInBlock.findIndex(function (txInBlock) { return txInBlock.txid === tx.txid; });
-                            if (utxidIndex !== -1) {
-                                var opts = {
-                                    method: 'getDetailedTransaction',
-                                    params: [tx.txid]
-                                };
-                                _this.socket.send(opts, function (confirmedTx) {
-                                    _this.txSubject$.next({
-                                        txid: confirmedTx.result.hash,
-                                        confirmed: true,
-                                        tx: confirmedTx.result
-                                    });
-                                });
-                            }
-                            else {
-                                newUnconfirmedTxs.push(tx);
-                            }
-                        });
+                        this.unconfirmedTxs.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
+                            var utxidIndex, err_2;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        utxidIndex = txsInBlock.findIndex(function (txInBlock) { return txInBlock.txid === tx.txid; });
+                                        if (!(utxidIndex !== -1)) return [3 /*break*/, 5];
+                                        _a.label = 1;
+                                    case 1:
+                                        _a.trys.push([1, 3, , 4]);
+                                        return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.txid))];
+                                    case 2:
+                                        txDetails = _a.sent();
+                                        txDetails = txDetails.data;
+                                        return [3 /*break*/, 4];
+                                    case 3:
+                                        err_2 = _a.sent();
+                                        console.error(err_2);
+                                        return [2 /*return*/];
+                                    case 4:
+                                        this.txSubject$.next({
+                                            txid: txDetails.txid,
+                                            confirmed: true,
+                                            tx: txDetails
+                                        });
+                                        return [3 /*break*/, 6];
+                                    case 5:
+                                        newUnconfirmedTxs.push(tx);
+                                        _a.label = 6;
+                                    case 6: return [2 /*return*/];
+                                }
+                            });
+                        }); });
                         this.unconfirmedTxs = newUnconfirmedTxs;
                         return [2 /*return*/];
                 }

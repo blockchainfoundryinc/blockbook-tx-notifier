@@ -37,6 +37,14 @@ export class BlockbookTxNotifier {
     return url.toString();
   }
 
+  private getTxUrl(txid) {
+    const url = new URL(this.bbUrl);
+    url.protocol = this.useHttp ? 'http' : 'https';
+    url.pathname = `/api/v2/tx/${txid}`;
+
+    return url.toString()
+  }
+
   private connect() {
     this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
 
@@ -84,6 +92,7 @@ export class BlockbookTxNotifier {
     this.socket.emit('subscribe', 'bitcoind/hashblock');
     this.socket.on('bitcoind/hashblock', async (hash) => {
       let block;
+      let txDetails;
 
       try {
         block = await axios.get(this.getHashblockUrl(hash));
@@ -96,20 +105,22 @@ export class BlockbookTxNotifier {
       const txsInBlock = block.txs;
 
       const newUnconfirmedTxs = [];
-      this.unconfirmedTxs.forEach(tx => {
+      this.unconfirmedTxs.forEach(async tx => {
         const utxidIndex = txsInBlock.findIndex((txInBlock) => txInBlock.txid === tx.txid);
 
         if (utxidIndex !== -1) {
-          const opts = {
-            method: 'getDetailedTransaction',
-            params: [tx.txid]
-          };
-          this.socket.send(opts, (confirmedTx) => {
-            this.txSubject$.next({
-              txid: confirmedTx.result.hash,
-              confirmed: true,
-              tx: confirmedTx.result
-            });
+          try {
+            txDetails = await axios.get(this.getTxUrl(tx.txid));
+            txDetails = txDetails.data;
+          } catch(err) {
+            console.error(err);
+            return;
+          }
+
+          this.txSubject$.next({
+            txid: txDetails.txid,
+            confirmed: true,
+            tx: txDetails
           });
         } else {
           newUnconfirmedTxs.push(tx);
