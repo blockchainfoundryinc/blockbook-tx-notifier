@@ -71,20 +71,25 @@ export class BlockbookTxNotifier {
   private subscribeToTxs() {
     this.socket.emit('subscribe', 'bitcoind/addresstxid', Array.isArray(this.address) ? this.address : [this.address]);
 
-    this.socket.on('bitcoind/addresstxid', (tx: AddressTxid) => {
-      const opts = {
-        method: 'getDetailedTransaction',
-        params: [tx.txid]
+    this.socket.on('bitcoind/addresstxid', async (tx: AddressTxid) => {
+      let txDetails;
+
+      try {
+        txDetails = await axios.get(this.getTxUrl(tx.txid));
+        console.log(tx)
+        txDetails = txDetails.data;
+      } catch(err) {
+        console.error(err);
+        return;
+      }
+
+      const parsedTx = {
+        txid: tx.txid,
+        confirmed: false,
+        tx: txDetails
       };
-      this.socket.send(opts, (txDetails) => {
-        const parsedTx = {
-          txid: tx.txid,
-          confirmed: false,
-          tx: txDetails.result
-        };
-        this.txSubject$.next(parsedTx);
-        this.unconfirmedTxs.push(parsedTx);
-      });
+      this.txSubject$.next(parsedTx);
+      this.unconfirmedTxs.push(parsedTx);
     });
   }
   
@@ -149,15 +154,25 @@ export class BlockbookTxNotifier {
     };
 
     this.socket.send(opts, (res) => {
-      const parsedItems = res.result.items.map(tx => ({
-        txid: tx.txid,
-        confirmed: false,
-        tx
-      }));
+      res.result.items.forEach(async tx => {
+        let txDetails;
 
-      parsedItems.forEach(tx => {
-        this.txSubject$.next(tx);
-        this.unconfirmedTxs.push(tx);
+        try {
+          txDetails = await axios.get(this.getTxUrl(tx.txid));
+          txDetails = txDetails.data;
+        } catch(err) {
+          console.error(err);
+          return
+        }
+
+        const parsedTx = {
+          txid: tx.txid,
+          confirmed: false,
+          tx: txDetails
+        };
+
+        this.txSubject$.next(parsedTx);
+        this.unconfirmedTxs.push(parsedTx);
       });
     });
   }

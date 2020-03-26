@@ -88,27 +88,40 @@ var BlockbookTxNotifier = /** @class */ (function () {
     BlockbookTxNotifier.prototype.subscribeToTxs = function () {
         var _this = this;
         this.socket.emit('subscribe', 'bitcoind/addresstxid', Array.isArray(this.address) ? this.address : [this.address]);
-        this.socket.on('bitcoind/addresstxid', function (tx) {
-            var opts = {
-                method: 'getDetailedTransaction',
-                params: [tx.txid]
-            };
-            _this.socket.send(opts, function (txDetails) {
-                var parsedTx = {
-                    txid: tx.txid,
-                    confirmed: false,
-                    tx: txDetails.result
-                };
-                _this.txSubject$.next(parsedTx);
-                _this.unconfirmedTxs.push(parsedTx);
+        this.socket.on('bitcoind/addresstxid', function (tx) { return __awaiter(_this, void 0, void 0, function () {
+            var txDetails, err_1, parsedTx;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.txid))];
+                    case 1:
+                        txDetails = _a.sent();
+                        console.log(tx);
+                        txDetails = txDetails.data;
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_1 = _a.sent();
+                        console.error(err_1);
+                        return [2 /*return*/];
+                    case 3:
+                        parsedTx = {
+                            txid: tx.txid,
+                            confirmed: false,
+                            tx: txDetails
+                        };
+                        this.txSubject$.next(parsedTx);
+                        this.unconfirmedTxs.push(parsedTx);
+                        return [2 /*return*/];
+                }
             });
-        });
+        }); });
     };
     BlockbookTxNotifier.prototype.subscribeToBlockhash = function () {
         var _this = this;
         this.socket.emit('subscribe', 'bitcoind/hashblock');
         this.socket.on('bitcoind/hashblock', function (hash) { return __awaiter(_this, void 0, void 0, function () {
-            var block, txDetails, err_1, txsInBlock, newUnconfirmedTxs;
+            var block, txDetails, err_2, txsInBlock, newUnconfirmedTxs;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -120,14 +133,14 @@ var BlockbookTxNotifier = /** @class */ (function () {
                         block = block.data;
                         return [3 /*break*/, 3];
                     case 2:
-                        err_1 = _a.sent();
-                        console.error(err_1);
+                        err_2 = _a.sent();
+                        console.error(err_2);
                         return [2 /*return*/];
                     case 3:
                         txsInBlock = block.txs;
                         newUnconfirmedTxs = [];
                         this.unconfirmedTxs.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var utxidIndex, err_2;
+                            var utxidIndex, err_3;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
@@ -142,8 +155,8 @@ var BlockbookTxNotifier = /** @class */ (function () {
                                         txDetails = txDetails.data;
                                         return [3 /*break*/, 4];
                                     case 3:
-                                        err_2 = _a.sent();
-                                        console.error(err_2);
+                                        err_3 = _a.sent();
+                                        console.error(err_3);
                                         return [2 /*return*/];
                                     case 4:
                                         this.txSubject$.next({
@@ -182,15 +195,33 @@ var BlockbookTxNotifier = /** @class */ (function () {
             ]
         };
         this.socket.send(opts, function (res) {
-            var parsedItems = res.result.items.map(function (tx) { return ({
-                txid: tx.txid,
-                confirmed: false,
-                tx: tx
+            res.result.items.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
+                var txDetails, err_4, parsedTx;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _a.trys.push([0, 2, , 3]);
+                            return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.txid))];
+                        case 1:
+                            txDetails = _a.sent();
+                            txDetails = txDetails.data;
+                            return [3 /*break*/, 3];
+                        case 2:
+                            err_4 = _a.sent();
+                            console.error(err_4);
+                            return [2 /*return*/];
+                        case 3:
+                            parsedTx = {
+                                txid: tx.txid,
+                                confirmed: false,
+                                tx: txDetails
+                            };
+                            this.txSubject$.next(parsedTx);
+                            this.unconfirmedTxs.push(parsedTx);
+                            return [2 /*return*/];
+                    }
+                });
             }); });
-            parsedItems.forEach(function (tx) {
-                _this.txSubject$.next(tx);
-                _this.unconfirmedTxs.push(tx);
-            });
         });
     };
     return BlockbookTxNotifier;
