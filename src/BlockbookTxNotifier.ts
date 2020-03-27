@@ -154,11 +154,12 @@ export class BlockbookTxNotifier {
     };
 
     this.socket.send(opts, (res) => {
+      console.log(res.result.items)
       res.result.items.forEach(async tx => {
         let txDetails;
 
         try {
-          txDetails = await axios.get(this.getTxUrl(tx.txid));
+          txDetails = await axios.get(this.getTxUrl(tx.tx.hash));
           txDetails = txDetails.data;
         } catch(err) {
           console.error(err);

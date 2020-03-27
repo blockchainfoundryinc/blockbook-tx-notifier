@@ -195,13 +195,14 @@ var BlockbookTxNotifier = /** @class */ (function () {
             ]
         };
         this.socket.send(opts, function (res) {
+            console.log(res.result.items);
             res.result.items.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
                 var txDetails, err_4, parsedTx;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             _a.trys.push([0, 2, , 3]);
-                            return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.txid))];
+                            return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.tx.hash))];
                         case 1:
                             txDetails = _a.sent();
                             txDetails = txDetails.data;
