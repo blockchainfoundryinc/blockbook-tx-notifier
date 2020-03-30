@@ -1,11 +1,25 @@
 import { BlockbookTxNotifier } from '../../dist';
 import * as socketio from 'socket.io';
+//import url from 'url';
 
+const URL = require('url');
 describe('BlockbookTxNotifier test', () => {
+  const mockDb = [
+    { txid: 'test_tx_1', tx: { hash: 'test_hash_1' }, memPool: true },
+    { txid: 'test_tx_2', tx: { hash: 'test_hash_2' }, memPool: false },
+    { txid: 'test_tx_3', tx: { hash: 'test_hash_3' }, memPool: false }
+  ];
   const app = require('http').createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+    const query = URL.parse(req.url);
+
+    if (query.path.indexOf('/tx') !== -1) {
+      res.write(JSON.stringify(mockDb[2]));
+      return res.end();  
+    }
+
     res.write(JSON.stringify({
-      txs: [{ txid: 'test_tx_3' }]
+      txs: [mockDb[2]]
     }));
     res.end();
   });
@@ -14,15 +28,17 @@ describe('BlockbookTxNotifier test', () => {
   const exampleConfig = {
     url: 'http://localhost:' + PORT,
     address: 'test_address',
-    preventFetchOnStart: true
+    preventFetchOnStart: true,
+    preventLog: true,
+    useHttp: true
   };
 
   io.on('connection', (socket) => {
     socket.on('message', (msg, answer) => {
       if (msg.method === 'getAddressHistory') {
-        return answer({ result: { items: [{ txid: 'test_tx_1' }, { txid: 'test_tx_2' }] } })
+        return answer({ result: { items: mockDb.filter(tx => tx.memPool) } })
       } else if (msg.method === 'getDetailedTransaction') {
-        return answer({ txid: msg.params[0] });
+        return answer(mockDb.find(tx => tx.txid === msg.params[0]));
       }
     })
   });
@@ -66,8 +82,8 @@ describe('BlockbookTxNotifier test', () => {
 
     setTimeout(() => {
       const firstCall: any = mockFn.mock.calls[0][0];
-      expect(mockFn.mock.calls).toHaveLength(2);
-      expect(firstCall.tx.txid).toEqual('test_tx_1');
+      expect(mockFn.mock.calls).toHaveLength(1);
+      expect(firstCall.txid).toEqual('test_tx_1');
       txNotif.disconnect();
       cb();
     }, 1000);
@@ -80,13 +96,13 @@ describe('BlockbookTxNotifier test', () => {
     txNotif.txSubject$.subscribe(mockFn);
 
     setTimeout(() => {
-      io.emit('bitcoind/addresstxid', { txid: 'second_tx_test', address: 'test_address' });
+      io.emit('bitcoind/addresstxid', { txid: 'test_tx_2', address: 'test_address' });
     }, 500);
 
     setTimeout(() => {
       const firstCall: any = mockFn.mock.calls[0][0];
       expect(mockFn.mock.calls).toHaveLength(1);
-      expect(firstCall.tx.txid).toEqual('second_tx_test');
+      expect(firstCall.txid).toEqual('test_tx_2');
       txNotif.disconnect();
       cb();
     }, 1000);
@@ -110,11 +126,12 @@ describe('BlockbookTxNotifier test', () => {
       const secondCall = mockFn.mock.calls[1][0];
       expect(mockFn.mock.calls).toHaveLength(2);
       expect(firstCall.confirmed).toBeFalsy();
-      expect(firstCall.tx.txid).toEqual('test_tx_3');
+      expect(firstCall.txid).toEqual('test_tx_3');
       expect(secondCall.confirmed).toBeTruthy();
-      expect(secondCall.tx.txid).toEqual('test_tx_3');
+      expect(secondCall.txid).toEqual('test_tx_3');
       txNotif.disconnect();
       cb();
     }, 2000);
   });
+
 });

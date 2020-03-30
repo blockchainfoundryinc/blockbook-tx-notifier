@@ -14,6 +14,7 @@ export class BlockbookTxNotifier {
   private socket;
   private unconfirmedTxs = [];
   private useHttp;
+  private preventLog;
   public statusSubject$ = new Subject();
   public txSubject$ = new Subject();
   
@@ -28,8 +29,15 @@ export class BlockbookTxNotifier {
     this.preventFetchOnStart = !!props.preventFetchOnStart;
     this.useHttp = !!props.useHttp;
     this.bbRestUrl = props.restUrl;
+    this.preventLog = props.preventLogs;
 
     this.connect();
+  }
+
+  private log(args) {
+    if (!this.preventLog) {
+      console.log(args)
+    }
   }
 
   private getHashblockUrl(hash) {
@@ -88,10 +96,9 @@ export class BlockbookTxNotifier {
 
       try {
         txDetails = await axios.get(this.getTxUrl(tx.txid));
-        console.log(tx)
         txDetails = txDetails.data;
       } catch(err) {
-        console.error(err);
+        this.log(err);
         return;
       }
 
@@ -115,7 +122,7 @@ export class BlockbookTxNotifier {
         block = await axios.get(this.getHashblockUrl(hash));
         block = block.data;
       } catch(err) {
-        console.error(err);
+        this.log(err);
         return;
       }
 
@@ -134,7 +141,7 @@ export class BlockbookTxNotifier {
             txDetails = await axios.get(this.getTxUrl(tx.txid));
             txDetails = txDetails.data;
           } catch(err) {
-            console.error(err);
+            this.log(err);
             return;
           }
 
@@ -170,7 +177,6 @@ export class BlockbookTxNotifier {
     };
 
     this.socket.send(opts, (res) => {
-      console.log(res.result.items)
       res.result.items.forEach(async tx => {
         let txDetails;
 
@@ -178,7 +184,7 @@ export class BlockbookTxNotifier {
           txDetails = await axios.get(this.getTxUrl(tx.tx.hash));
           txDetails = txDetails.data;
         } catch(err) {
-          console.error(err);
+          this.log(err);
           return
         }
 

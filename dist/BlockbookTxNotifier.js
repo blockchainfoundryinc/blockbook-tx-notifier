@@ -54,8 +54,14 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.preventFetchOnStart = !!props.preventFetchOnStart;
         this.useHttp = !!props.useHttp;
         this.bbRestUrl = props.restUrl;
+        this.preventLog = props.preventLogs;
         this.connect();
     }
+    BlockbookTxNotifier.prototype.log = function (args) {
+        if (!this.preventLog) {
+            console.log(args);
+        }
+    };
     BlockbookTxNotifier.prototype.getHashblockUrl = function (hash) {
         var url = new URL(this.bbRestUrl ? this.bbRestUrl : this.bbUrl);
         if (!this.bbRestUrl) {
@@ -103,12 +109,11 @@ var BlockbookTxNotifier = /** @class */ (function () {
                         return [4 /*yield*/, axios_1.default.get(this.getTxUrl(tx.txid))];
                     case 1:
                         txDetails = _a.sent();
-                        console.log(tx);
                         txDetails = txDetails.data;
                         return [3 /*break*/, 3];
                     case 2:
                         err_1 = _a.sent();
-                        console.error(err_1);
+                        this.log(err_1);
                         return [2 /*return*/];
                     case 3:
                         parsedTx = {
@@ -140,7 +145,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
                         return [3 /*break*/, 3];
                     case 2:
                         err_2 = _a.sent();
-                        console.error(err_2);
+                        this.log(err_2);
                         return [2 /*return*/];
                     case 3:
                         txsInBlock = block.txs;
@@ -165,7 +170,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
                                         return [3 /*break*/, 4];
                                     case 3:
                                         err_3 = _a.sent();
-                                        console.error(err_3);
+                                        this.log(err_3);
                                         return [2 /*return*/];
                                     case 4:
                                         this.txSubject$.next({
@@ -204,7 +209,6 @@ var BlockbookTxNotifier = /** @class */ (function () {
             ]
         };
         this.socket.send(opts, function (res) {
-            console.log(res.result.items);
             res.result.items.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
                 var txDetails, err_4, parsedTx;
                 return __generator(this, function (_a) {
@@ -218,7 +222,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
                             return [3 /*break*/, 3];
                         case 2:
                             err_4 = _a.sent();
-                            console.error(err_4);
+                            this.log(err_4);
                             return [2 /*return*/];
                         case 3:
                             parsedTx = {

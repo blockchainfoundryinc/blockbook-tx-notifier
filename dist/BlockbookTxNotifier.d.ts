@@ -8,9 +8,11 @@ export declare class BlockbookTxNotifier {
     private socket;
     private unconfirmedTxs;
     private useHttp;
+    private preventLog;
     statusSubject$: Subject<unknown>;
     txSubject$: Subject<unknown>;
     constructor(props: any);
+    private log;
     private getHashblockUrl;
     private getTxUrl;
     private connect;

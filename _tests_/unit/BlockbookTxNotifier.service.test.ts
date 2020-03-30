@@ -21,11 +21,11 @@ describe('Service: BlockbookTxNotifier', () => {
 
     config = TestBed.get(BlockbookTxNotifierConfigService);
     service = TestBed.get(BlockbookTxNotifierService);
-    config.configure('test', 'test');
+    config.configure('test', 'test', 'test');
   });
 
   it('Configuring the config service should trigger the websocket service to init', () => {
-    expect(service.config).toEqual({ url: 'test', address: 'test' });
+    expect(service.config).toEqual({ url: 'test', address: 'test', restUrl: 'test' });
   });
 
   it('txSubject is defined after config', () => {
