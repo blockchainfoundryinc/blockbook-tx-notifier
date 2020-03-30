@@ -121,6 +121,10 @@ export class BlockbookTxNotifier {
 
       const txsInBlock = block.txs;
 
+      if (!txsInBlock) {
+        return;
+      }
+
       const newUnconfirmedTxs = [];
       this.unconfirmedTxs.forEach(async tx => {
         const utxidIndex = txsInBlock.findIndex((txInBlock) => txInBlock.txid === tx.txid);

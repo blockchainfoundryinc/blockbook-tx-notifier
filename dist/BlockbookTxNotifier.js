@@ -144,6 +144,9 @@ var BlockbookTxNotifier = /** @class */ (function () {
                         return [2 /*return*/];
                     case 3:
                         txsInBlock = block.txs;
+                        if (!txsInBlock) {
+                            return [2 /*return*/];
+                        }
                         newUnconfirmedTxs = [];
                         this.unconfirmedTxs.forEach(function (tx) { return __awaiter(_this, void 0, void 0, function () {
                             var utxidIndex, err_3;
