@@ -8,4 +8,5 @@ export interface AddressTxid {
 export interface BlockbookTxNotifiersConstructorProps {
     url: string;
     address: string;
+    restUrl?: string;
 }

@@ -19,7 +19,7 @@ var BlockbookTxNotifierService = /** @class */ (function () {
             if (!config)
                 return;
             _this.config = config;
-            _this.txNotifs = new index_1.BlockbookTxNotifier({ url: config.url, address: config.address });
+            _this.txNotifs = new index_1.BlockbookTxNotifier({ url: config.url, address: config.address, restUrl: config.restUrl });
         });
     }
     BlockbookTxNotifierService.prototype.ngOnDestroy = function () {

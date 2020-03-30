@@ -2,6 +2,7 @@ import 'url-polyfill';
 import { Subject } from 'rxjs';
 export declare class BlockbookTxNotifier {
     private bbUrl;
+    private bbRestUrl;
     private address;
     private preventFetchOnStart;
     private socket;

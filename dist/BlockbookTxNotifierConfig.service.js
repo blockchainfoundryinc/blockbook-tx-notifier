@@ -14,10 +14,12 @@ var BlockbookTxNotifierConfigService = /** @class */ (function () {
     function BlockbookTxNotifierConfigService() {
         this.configComplete = new rxjs_1.BehaviorSubject(null);
     }
-    BlockbookTxNotifierConfigService.prototype.configure = function (url, address) {
+    BlockbookTxNotifierConfigService.prototype.configure = function (url, address, restUrl) {
+        if (restUrl === void 0) { restUrl = ''; }
         this.url = url;
         this.address = address;
-        this.configComplete.next({ url: this.url, address: this.address });
+        this.restUrl = restUrl;
+        this.configComplete.next({ url: this.url, address: this.address, restUrl: this.restUrl });
     };
     BlockbookTxNotifierConfigService = __decorate([
         core_1.Injectable(),

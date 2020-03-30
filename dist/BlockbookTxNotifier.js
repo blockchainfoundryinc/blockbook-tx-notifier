@@ -42,6 +42,7 @@ var rxjs_1 = require("rxjs");
 var BlockbookTxNotifier = /** @class */ (function () {
     function BlockbookTxNotifier(props) {
         this.bbUrl = '';
+        this.bbRestUrl = '';
         this.unconfirmedTxs = [];
         this.statusSubject$ = new rxjs_1.Subject();
         this.txSubject$ = new rxjs_1.Subject();
@@ -52,17 +53,22 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.address = props.address;
         this.preventFetchOnStart = !!props.preventFetchOnStart;
         this.useHttp = !!props.useHttp;
+        this.bbRestUrl = props.restUrl;
         this.connect();
     }
     BlockbookTxNotifier.prototype.getHashblockUrl = function (hash) {
-        var url = new URL(this.bbUrl);
-        url.protocol = this.useHttp ? 'http' : 'https';
+        var url = new URL(this.bbRestUrl ? this.bbRestUrl : this.bbUrl);
+        if (!this.bbRestUrl) {
+            url.protocol = this.useHttp ? 'http' : 'https';
+        }
         url.pathname = "/api/v2/block/" + hash;
         return url.toString();
     };
     BlockbookTxNotifier.prototype.getTxUrl = function (txid) {
-        var url = new URL(this.bbUrl);
-        url.protocol = this.useHttp ? 'http' : 'https';
+        var url = new URL(this.bbRestUrl ? this.bbRestUrl : this.bbUrl);
+        if (!this.bbRestUrl) {
+            url.protocol = this.useHttp ? 'http' : 'https';
+        }
         url.pathname = "/api/v2/tx/" + txid;
         return url.toString();
     };
