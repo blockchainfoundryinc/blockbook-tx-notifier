@@ -11,7 +11,7 @@ export class BlockbookTxNotifierService implements OnDestroy {
     this.configService.configComplete.subscribe(config => {
       if (!config) return;
       this.config = config;
-      this.txNotifs = new BlockbookTxNotifier({ url: config.url, address: config.address});
+      this.txNotifs = new BlockbookTxNotifier({ url: config.url, address: config.address, restUrl: config.restUrl});
     });
   }
 

@@ -8,6 +8,7 @@ import {
 
 export class BlockbookTxNotifier {
   private bbUrl = '';
+  private bbRestUrl = '';
   private address;
   private preventFetchOnStart;
   private socket;
@@ -15,6 +16,7 @@ export class BlockbookTxNotifier {
   private useHttp;
   public statusSubject$ = new Subject();
   public txSubject$ = new Subject();
+  
 
   constructor(props) {
     if (!props.url || !props.address) {
@@ -25,21 +27,31 @@ export class BlockbookTxNotifier {
     this.address = props.address;
     this.preventFetchOnStart = !!props.preventFetchOnStart;
     this.useHttp = !!props.useHttp;
+    this.bbRestUrl = props.restUrl;
 
     this.connect();
   }
 
   private getHashblockUrl(hash) {
-    const url = new URL(this.bbUrl);
-    url.protocol = this.useHttp ? 'http' : 'https';
+    const url = new URL(this.bbRestUrl ? this.bbRestUrl : this.bbUrl);
+
+    if (!this.bbRestUrl) {
+      url.protocol = this.useHttp ? 'http' : 'https';
+    }
+
+    
     url.pathname = `/api/v2/block/${hash}`;
 
     return url.toString();
   }
 
   private getTxUrl(txid) {
-    const url = new URL(this.bbUrl);
-    url.protocol = this.useHttp ? 'http' : 'https';
+    const url = new URL(this.bbRestUrl ? this.bbRestUrl : this.bbUrl);
+    
+    if (!this.bbRestUrl) {
+      url.protocol = this.useHttp ? 'http' : 'https';
+    }
+
     url.pathname = `/api/v2/tx/${txid}`;
 
     return url.toString()
