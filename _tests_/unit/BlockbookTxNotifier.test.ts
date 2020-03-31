@@ -60,21 +60,30 @@ describe('BlockbookTxNotifier test', () => {
     }
   })
 
-  it('connectedSubject$ should fire false / true on connect / disconnect', (cb) => {
+  it('connectedSubject$ should fire null / true / false on init / connect / disconnect', (cb) => {
     const txNotif = new BlockbookTxNotifier(exampleConfig);
-    let falseCount = 0;
+    let count = 0;
     txNotif.connectedSubject$.subscribe(status => {
-      if (!txNotif.isConnected()) {
-        expect(status).toEqual(false);
-        falseCount ++;
-
-        if(falseCount == 2) {
-          cb();
-        }
-      } else if (txNotif.isConnected()){
-        expect(status).toEqual(true);
-        txNotif.disconnect();
+      console.log('STAT', status, count);
+      if (count === 0) {
+        expect(status).toBeNull();
+        count ++;
+        return;
       }
+
+      if (count === 1) {
+        expect(status).toEqual(true);
+        count ++;
+        txNotif.disconnect();
+        return;
+      }
+
+      if (count === 2) {
+        expect(status).toEqual(false);
+        cb();
+      }
+
+
     });
   });
 

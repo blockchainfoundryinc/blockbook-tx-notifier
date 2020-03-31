@@ -1,6 +1,6 @@
 import { OnDestroy } from '@angular/core';
 import { BlockbookTxNotifierConfigService } from "./BlockbookTxNotifierConfig.service";
-import { BlockbookTxNotifiersConstructorProps } from "./index";
+import { BlockbookTxNotifiersConstructorProps } from "./models";
 export declare class BlockbookTxNotifierService implements OnDestroy {
     private configService;
     private txNotifs;

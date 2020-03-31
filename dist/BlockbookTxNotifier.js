@@ -44,7 +44,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.bbUrl = '';
         this.bbRestUrl = '';
         this.unconfirmedTxs = [];
-        this.connectedSubject$ = new rxjs_1.BehaviorSubject(false);
+        this.connectedSubject$ = new rxjs_1.BehaviorSubject(null);
         this.txSubject$ = new rxjs_1.Subject();
         if (!props.url || !props.address) {
             throw new Error('Missing required parameter.');

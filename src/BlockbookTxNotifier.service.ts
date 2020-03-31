@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BlockbookTxNotifierConfigService } from "./BlockbookTxNotifierConfig.service";
-import { BlockbookTxNotifiersConstructorProps, BlockbookTxNotifier } from "./index";
+import { BlockbookTxNotifiersConstructorProps } from "./models";
+import { BlockbookTxNotifier } from "./BlockbookTxNotifier";
 
 @Injectable()
 export class BlockbookTxNotifierService implements OnDestroy {

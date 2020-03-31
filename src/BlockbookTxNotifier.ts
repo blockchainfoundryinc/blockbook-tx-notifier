@@ -2,9 +2,7 @@ import * as io from 'socket.io-client';
 import axios from 'axios';
 import 'url-polyfill';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {
-  AddressTxid
-} from './index';
+import { AddressTxid } from './models';
 
 export class BlockbookTxNotifier {
   private bbUrl = '';
@@ -15,7 +13,7 @@ export class BlockbookTxNotifier {
   private unconfirmedTxs = [];
   private useHttp;
   private preventLog;
-  public connectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public connectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject(null);
   public txSubject$ = new Subject();
   
 
