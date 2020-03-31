@@ -24,6 +24,6 @@ export class BlockbookTxNotifierService implements OnDestroy {
   }
 
   statusSubject() {
-    return this.txNotifs.statusSubject$;
+    return this.txNotifs.connectedSubject$;
   }
 }

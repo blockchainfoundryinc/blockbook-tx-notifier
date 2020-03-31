@@ -44,7 +44,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.bbUrl = '';
         this.bbRestUrl = '';
         this.unconfirmedTxs = [];
-        this.statusSubject$ = new rxjs_1.Subject();
+        this.connectedSubject$ = new rxjs_1.BehaviorSubject(false);
         this.txSubject$ = new rxjs_1.Subject();
         if (!props.url || !props.address) {
             throw new Error('Missing required parameter.');
@@ -82,14 +82,14 @@ var BlockbookTxNotifier = /** @class */ (function () {
         var _this = this;
         this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
         this.socket.on('connect', function () {
-            _this.statusSubject$.next('connected');
+            _this.connectedSubject$.next(true);
             _this.subscribeToTxs();
             _this.subscribeToBlockhash();
             if (!_this.preventFetchOnStart) {
                 _this.getUnconfirmedTxs();
             }
         });
-        this.socket.on('disconnect', function () { return _this.statusSubject$.next('disconnected'); });
+        this.socket.on('disconnect', function () { return _this.connectedSubject$.next(false); });
     };
     BlockbookTxNotifier.prototype.disconnect = function () {
         this.socket.disconnect();

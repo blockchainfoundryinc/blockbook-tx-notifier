@@ -1,7 +1,7 @@
 import * as io from 'socket.io-client';
 import axios from 'axios';
 import 'url-polyfill';
-import { Subject } from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {
   AddressTxid
 } from './index';
@@ -15,7 +15,7 @@ export class BlockbookTxNotifier {
   private unconfirmedTxs = [];
   private useHttp;
   private preventLog;
-  public statusSubject$ = new Subject();
+  public connectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public txSubject$ = new Subject();
   
 
@@ -69,7 +69,7 @@ export class BlockbookTxNotifier {
     this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
 
     this.socket.on('connect', () => {
-      this.statusSubject$.next('connected')
+      this.connectedSubject$.next(true);
       this.subscribeToTxs();
       this.subscribeToBlockhash();
 
@@ -77,7 +77,7 @@ export class BlockbookTxNotifier {
         this.getUnconfirmedTxs();
       }
     });
-    this.socket.on('disconnect', () => this.statusSubject$.next('disconnected'));
+    this.socket.on('disconnect', () => this.connectedSubject$.next(false));
   }
 
   public disconnect() {

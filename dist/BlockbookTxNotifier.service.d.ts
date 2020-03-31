@@ -8,5 +8,5 @@ export declare class BlockbookTxNotifierService implements OnDestroy {
     constructor(configService: BlockbookTxNotifierConfigService);
     ngOnDestroy(): void;
     txSubject(): import("rxjs").Subject<unknown>;
-    statusSubject(): import("rxjs").Subject<unknown>;
+    statusSubject(): import("rxjs").BehaviorSubject<boolean>;
 }

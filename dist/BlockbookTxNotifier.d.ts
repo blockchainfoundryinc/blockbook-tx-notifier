@@ -1,5 +1,5 @@
 import 'url-polyfill';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 export declare class BlockbookTxNotifier {
     private bbUrl;
     private bbRestUrl;
@@ -9,7 +9,7 @@ export declare class BlockbookTxNotifier {
     private unconfirmedTxs;
     private useHttp;
     private preventLog;
-    statusSubject$: Subject<unknown>;
+    connectedSubject$: BehaviorSubject<boolean>;
     txSubject$: Subject<unknown>;
     constructor(props: any);
     private log;

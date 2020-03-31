@@ -29,7 +29,7 @@ var BlockbookTxNotifierService = /** @class */ (function () {
         return this.txNotifs.txSubject$;
     };
     BlockbookTxNotifierService.prototype.statusSubject = function () {
-        return this.txNotifs.statusSubject$;
+        return this.txNotifs.connectedSubject$;
     };
     BlockbookTxNotifierService = __decorate([
         core_1.Injectable(),
