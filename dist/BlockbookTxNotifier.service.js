@@ -28,7 +28,7 @@ var BlockbookTxNotifierService = /** @class */ (function () {
     BlockbookTxNotifierService.prototype.txSubject = function () {
         return this.txNotifs.txSubject$;
     };
-    BlockbookTxNotifierService.prototype.statusSubject = function () {
+    BlockbookTxNotifierService.prototype.connectedSubject = function () {
         return this.txNotifs.connectedSubject$;
     };
     BlockbookTxNotifierService = __decorate([

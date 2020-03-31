@@ -33,6 +33,6 @@ describe('Service: BlockbookTxNotifier', () => {
   });
 
   it('statusSubject is defined after config', () => {
-    expect(service.statusSubject()).toBeDefined()
+    expect(service.connectedSubject()).toBeDefined()
   });
 });
