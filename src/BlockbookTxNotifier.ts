@@ -111,7 +111,7 @@ export class BlockbookTxNotifier {
       this.unconfirmedTxs.push(parsedTx);
     });
 
-    this.checkCancelledInterval = setInterval(this.checkCancelledTx, this.CANCELLED_INTERVAL_MS);
+    this.checkCancelledInterval = setInterval(this.checkCancelledTx.bind(this), this.CANCELLED_INTERVAL_MS);
   }
 
   private checkCancelledTx() {

@@ -139,7 +139,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
                 }
             });
         }); });
-        this.checkCancelledInterval = setInterval(this.checkCancelledTx, this.CANCELLED_INTERVAL_MS);
+        this.checkCancelledInterval = setInterval(this.checkCancelledTx.bind(this), this.CANCELLED_INTERVAL_MS);
     };
     BlockbookTxNotifier.prototype.checkCancelledTx = function () {
         var _this = this;
