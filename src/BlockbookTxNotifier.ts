@@ -13,6 +13,8 @@ export class BlockbookTxNotifier {
   private unconfirmedTxs = [];
   private useHttp;
   private preventLog;
+  private checkCancelledInterval;
+  private CANCELLED_INTERVAL_MS = 5000;
   public connectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject(null);
   public txSubject$ = new Subject();
   
@@ -108,6 +110,33 @@ export class BlockbookTxNotifier {
       this.txSubject$.next(parsedTx);
       this.unconfirmedTxs.push(parsedTx);
     });
+
+    this.checkCancelledInterval = setInterval(this.checkCancelledTx, this.CANCELLED_INTERVAL_MS);
+  }
+
+  private checkCancelledTx() {
+    this.unconfirmedTxs.forEach(async utx => {
+      let utxInfo;
+
+      try {
+        utxInfo = await axios.get(this.getTxUrl(utx.txid));
+
+        if (utx.error) {
+          throw utx.error;
+        }
+
+        return;
+      } catch(err) {
+        this.log(`Tx ${utx.txid} dropped.`);
+        const newTxs = this.unconfirmedTxs.filter(tx => tx.txid !== utx.txid);
+        this.unconfirmedTxs = newTxs;
+        this.txSubject$.next({
+          ...utx,
+          cancelled: true
+        })
+        return;
+      }
+    })
   }
   
   private subscribeToBlockhash() {
