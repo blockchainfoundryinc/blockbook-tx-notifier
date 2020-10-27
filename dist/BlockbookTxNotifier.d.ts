@@ -9,6 +9,8 @@ export declare class BlockbookTxNotifier {
     private unconfirmedTxs;
     private useHttp;
     private preventLog;
+    private checkCancelledInterval;
+    private CANCELLED_INTERVAL_MS;
     connectedSubject$: BehaviorSubject<boolean>;
     txSubject$: Subject<unknown>;
     constructor(props: any);
@@ -19,6 +21,7 @@ export declare class BlockbookTxNotifier {
     disconnect(): void;
     isConnected(): any;
     private subscribeToTxs;
+    private checkCancelledTx;
     private subscribeToBlockhash;
     getUnconfirmedTxs(): void;
 }
