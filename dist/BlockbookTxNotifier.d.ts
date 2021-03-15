@@ -10,6 +10,7 @@ export declare class BlockbookTxNotifier {
     private useHttp;
     private preventLog;
     private checkCancelledInterval;
+    private alreadySubscribed;
     private CANCELLED_INTERVAL_MS;
     connectedSubject$: BehaviorSubject<boolean>;
     txSubject$: Subject<unknown>;

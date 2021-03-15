@@ -14,6 +14,7 @@ export class BlockbookTxNotifier {
   private useHttp;
   private preventLog;
   private checkCancelledInterval;
+  private alreadySubscribed = false;
   private CANCELLED_INTERVAL_MS = 5000;
   public connectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject(null);
   public txSubject$ = new Subject();
@@ -70,12 +71,17 @@ export class BlockbookTxNotifier {
 
     this.socket.on('connect', () => {
       this.connectedSubject$.next(true);
-      this.subscribeToTxs();
-      this.subscribeToBlockhash();
+
+      if (!this.alreadySubscribed) {
+        this.subscribeToTxs();
+        this.subscribeToBlockhash();
+      }
 
       if (!this.preventFetchOnStart) {
         this.getUnconfirmedTxs();
       }
+
+      this.alreadySubscribed = true;
     });
     this.socket.on('disconnect', () => this.connectedSubject$.next(false));
   }

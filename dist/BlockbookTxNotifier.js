@@ -55,6 +55,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.bbUrl = '';
         this.bbRestUrl = '';
         this.unconfirmedTxs = [];
+        this.alreadySubscribed = false;
         this.CANCELLED_INTERVAL_MS = 5000;
         this.connectedSubject$ = new rxjs_1.BehaviorSubject(null);
         this.txSubject$ = new rxjs_1.Subject();
@@ -95,11 +96,14 @@ var BlockbookTxNotifier = /** @class */ (function () {
         this.socket = io.connect(this.bbUrl, { transports: ['websocket'] });
         this.socket.on('connect', function () {
             _this.connectedSubject$.next(true);
-            _this.subscribeToTxs();
-            _this.subscribeToBlockhash();
+            if (!_this.alreadySubscribed) {
+                _this.subscribeToTxs();
+                _this.subscribeToBlockhash();
+            }
             if (!_this.preventFetchOnStart) {
                 _this.getUnconfirmedTxs();
             }
+            _this.alreadySubscribed = true;
         });
         this.socket.on('disconnect', function () { return _this.connectedSubject$.next(false); });
     };
