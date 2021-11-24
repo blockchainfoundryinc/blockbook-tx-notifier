@@ -270,7 +270,7 @@ var BlockbookTxNotifier = /** @class */ (function () {
                             return [2 /*return*/];
                         case 3:
                             parsedTx = {
-                                txid: tx.txid,
+                                txid: txDetails.txid,
                                 confirmed: false,
                                 tx: txDetails
                             };

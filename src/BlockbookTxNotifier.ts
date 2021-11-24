@@ -222,7 +222,7 @@ export class BlockbookTxNotifier {
         }
 
         const parsedTx = {
-          txid: tx.txid,
+          txid: txDetails.txid,
           confirmed: false,
           tx: txDetails
         };
